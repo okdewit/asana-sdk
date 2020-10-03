@@ -1,6 +1,6 @@
 # asana-sdk
 
-A Rust SDK for the Asana Rest API
+A Rust Asana SDK, for the Asana Rest API
 
 This crate uses a `model!` macro to define flexible model Structs, which can be used to deserialize entities, select include fields and embed relationships from the Asana API.
 
