@@ -18,7 +18,7 @@ let mut user:  User      = asana.get::<User>("me").await;
 let mut users: Vec<User> = asana.list::<User>().await;
 ```
 
-````Rust
+```Rust
 model!(TaskWithProjects "tasks" {
     name: String,
     projects: Vec<Project>
