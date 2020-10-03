@@ -1,11 +1,12 @@
-//! Asana-sdk is an experimental crate which aims to provide a simple yet flexible interface to the Asana API.
+//! A Rust Asana SDK, for the Asana Rest API
 //!
-//! This crate does NOT come with predefined Struct models for all the Asana entities.
+//! This crate uses a model! macro to define flexible Model Structs with a very lean syntax.
+//! These generated structs are used to deserialize entities, select include fields and embed relationships from the Asana API.
 //!
 //! The Asana API returns flexible objects with varying field & relation includes, so this crate uses models provided by the user.
 //! This makes the crate also compatible with entities added to the API by Asana in the future.
 //!
-//! To make the interface as ergonomic as possible, it relies heavily on two components:
+//! To make the interface as ergonomic as possible, it relies on two components:
 //!
 //! * A `model!()` macro to easily define deserialization Structs ([serde](https://docs.rs/serde/)), together with endpoint urls and field/relation inclusion querystrings.
 //! * Turbofish operators (`get::<Type>()`) to make API calls for defined models.
@@ -99,7 +100,7 @@ impl Asana {
             token,
             endpoint: String::from(""),
             client: reqwest::Client::builder()
-                .user_agent("asana_sdk.rs/0.1.0")
+                .user_agent("asana_sdk.rs/0.1.2")
                 .build().unwrap(),
         }
 
