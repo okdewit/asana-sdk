@@ -6,6 +6,8 @@ license = "MIT"
 keywords = ["asana", "sdk", "api"]
 categories = ["api-bindings"]
 description = "A Rust SDK for the Asana Rest API"
+repository = "https://github.com/okdewit/asana-sdk/"
+readme = "README.md"
 edition = "2018"
 
 [dependencies]
