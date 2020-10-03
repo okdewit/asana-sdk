@@ -1,6 +1,25 @@
 use serde::{Deserialize};
 use serde::de::DeserializeOwned;
 
+/// A macro for generating Asana model structs
+///
+/// # Examples
+///
+/// The example below will generate a `User` struct, linked to the `/users` Asana endpoint.
+///
+/// * It will include & deserialize the `email` & `name` fields as Strings.
+/// * The fields `gid` and `resource_type` are included by default, and don't have to be specified.
+///
+/// Any extra fields returned from the Asana API are flattened by [`Serde`] into a [`Hashmap`]:
+///
+/// ```
+/// use asana_sdk::models::Model;
+///
+/// model!(User "users" {
+///     email: String,
+///     name: String,
+/// });
+/// ```
 #[macro_export]
 macro_rules! model {
     ($name:ident $endpoint:literal { $( $field:ident: $fty:ty ),* $(,)? } $( $include:ident),* $(,)?) => {

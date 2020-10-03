@@ -1,3 +1,82 @@
+//! Asana-sdk is an experimental crate which aims to provide a simple yet flexible interface to the Asana API.
+//!
+//! This crate does NOT come with predefined Struct models for all the Asana entities.
+//!
+//! The Asana API returns flexible objects with varying field & relation includes, so this crate uses models provided by the user.
+//! This makes the crate also compatible with entities added to the API by Asana in the future.
+//!
+//! To make the interface as ergonomic as possible, it relies heavily on two components:
+//!
+//! * A `model!()` macro to easily define deserialization Structs ([serde](https://docs.rs/serde/)), together with endpoint urls and field/relation inclusion querystrings.
+//! * Turbofish operators (`get::<Type>()`) to make API calls for defined models.
+//!
+//! ## Sample usage
+//!
+//! ```
+//! use reqwest::{Error};
+//! use asana_sdk::*;
+//! use asana_sdk::models::Model;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Error> {
+//!
+//!     // Connect with your Asana PAT (token), from https://app.asana.com/0/developer-console
+//!     let mut asana = Asana::connect(String::from("1/your:personal-access-token"));
+//!
+//!     // A Model Struct linked to the "users" endpoint
+//!     model!(User "users" {
+//!         email: String,
+//!         name: String,
+//!     });
+//!
+//!     // Simple calls to get one or multiple users
+//!     let mut user:  User      = asana.get::<User>("me").await;
+//!     let mut users: Vec<User> = asana.list::<User>().await;
+//!
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### A few more advanced examples:
+//!
+//! Compound call to list all sections *within* a specific project
+//! ```
+//! model!(Section "sections" { name: String });
+//! model!(Project "projects" { name: String });
+//!
+//! let mut sections = asana
+//!     .from::<Project>("12345678")
+//!     .list::<Section>().await;
+//! ```
+//!
+//! A Struct for Tasks including Projects.
+//! TaskWithProjects is just an example name, you can give the Struct any name you want.
+//!
+//! The call will list all tasks from a specific section,
+//! and include all other projects the task is part of.
+//! ```
+//! model!(TaskWithProjects "tasks" {
+//!     name: String,
+//!     projects: Vec<Project>
+//! } Project);
+//!
+//! let mut tasks_with_projects = asana
+//!      .from::<Section>("12345678")
+//!      .list::<TaskWithProjects>().await;
+//! ```
+//!
+//! Note that all model Structs by default include gid & resource_type,
+//! So it's not mandatory to include other fields.
+//!
+//! Fields which might be null in the API should be deserialized into an Option<Type>
+//! ```
+//! model!(Assignee "assignee" {});
+//! model!(TaskWithAssignee "tasks" {
+//!     name: String,
+//!     assignee: Option<Assignee>
+//! } Assignee);
+//! ```
+
 use reqwest::{Method, Response};
 use std::vec::Vec;
 use log::*;
@@ -6,7 +85,6 @@ pub mod models;
 use crate::models::*;
 
 pub struct Asana;
-
 const API_VERSION: &str = "1.0";
 
 pub struct Client {
@@ -21,7 +99,7 @@ impl Asana {
             token,
             endpoint: String::from(""),
             client: reqwest::Client::builder()
-                .user_agent("AsanaGraph/1.0.0")
+                .user_agent("asana_sdk.rs/0.1.0")
                 .build().unwrap(),
         }
 
