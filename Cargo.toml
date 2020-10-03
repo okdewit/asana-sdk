@@ -1,6 +1,6 @@
 [package]
 name = "asana-sdk"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Orian de Wit <okdewit@gmail.com>"]
 license = "MIT"
 keywords = ["asana", "sdk", "api"]
