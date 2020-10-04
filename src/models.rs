@@ -20,9 +20,30 @@ use serde::de::DeserializeOwned;
 ///     name: String,
 /// });
 /// ```
+///
+/// Comma-separated includes are defined after the struct. Their deserialization type must be indicated within the struct.
+/// This will usually be a `Vec<Type>` or `Option<Type>`.
+///
+/// This example is suitable for getting a set of Tasks, with the set of Projects that tasks belongs to, and the Assignee the task is assigned to.
+/// Of course, you can include more fields than just `name` on the includes.
+/// ```
+/// model!(Assignee "assignee" {
+///     name: String
+/// });
+///
+/// model!(Project "projects" {
+///     name: String
+/// });
+///
+/// model!(Tasks "tasks" {
+///     name: String,
+///     assignee: Option<Assignee>
+///     projects: Vec<Project>
+/// } Project, Assignee);
+/// ```
 #[macro_export]
 macro_rules! model {
-    ($name:ident $endpoint:literal { $( $field:ident: $fty:ty ),* $(,)? } $( $include:ident),* $(,)?) => {
+    ($name:ident $endpoint:literal { $( $field:ident: $fty:ty ),* $(,)? } $( $include:ident),* $(,)? ) => {
         #[derive(serde::Serialize, serde::Deserialize, Debug)]
         pub struct $name {
             gid: String,
