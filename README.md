@@ -18,13 +18,27 @@ let mut user:  User      = asana.get::<User>("me").await;
 let mut users: Vec<User> = asana.list::<User>().await;
 ```
 
+Included fields/relationships, and relationship constraints are also possible.  
+You only need to define the fields you actually need on each model.
 ```Rust
-model!(TaskWithProjects "tasks" {
+model!(Tasks "tasks" {
     name: String,
     projects: Vec<Project>
-} Project);
+    assignee: Option<Assignee>
+} Project, Assignee);
 
-let mut tasks_with_projects = asana
+model!(Project "projects" { name: String });
+model!(Assignee "assignee" { name: String });
+model!(Section "sections" {});
+
+let mut tasks_with_projects_and_assignee = asana
      .from::<Section>("12345678")
-     .list::<TaskWithProjects>().await;
+     .list::<Tasks>().await;
 ```
+
+## Contributions
+
+This crate is far from perfect, so contributions are very welcome!  
+It still needs tests and support for persisting models through `POST`/`PUT` requests, for example.
+ 
+Just open an [issue](https://github.com/okdewit/asana-sdk/issues) or make a [pull request](https://github.com/okdewit/asana-sdk/pulls).
